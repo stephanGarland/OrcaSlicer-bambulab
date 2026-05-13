@@ -4,6 +4,13 @@ set -e
 set -o pipefail
 SECONDS=0
 
+# Autotools-based dependencies (GMP, MPFR) don't inherit
+# CMAKE_OSX_DEPLOYMENT_TARGET and pick up the host SDK by default. On macOS
+# 15+ with Xcode 16+, that means they need SDKROOT pointed at the active SDK
+# explicitly or their configure step fails. Export the active SDK path if the
+# user hasn't already set one.
+export SDKROOT="${SDKROOT:-$(xcrun --show-sdk-path)}"
+
 while getopts ":dpa:snt:xbc:i:1Tuh" opt; do
   case "${opt}" in
     d )
