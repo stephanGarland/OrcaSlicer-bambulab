@@ -733,7 +733,7 @@ nlohmann::json LinuxPluginHost::handle(const std::string& method, const nlohmann
         auto r = drain_events(payload.value("limit", 64U));
         // Async events from the .so (on_server_connected, on_http_error, etc.)
         // surface here. They're the only window into the .so's MQTT/cloud
-        // status. Gated behind PJARCZAK_LOG_ALL_RPC, and only emitted when
+        // status. Gated behind ORCA_LOG_ALL_RPC, and only emitted when
         // something actually arrived to avoid 1-Hz noise from idle polling.
         if (trace_all && r.is_object()) {
             auto it = r.find("events");
