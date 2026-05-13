@@ -2,6 +2,10 @@
   <img alt="OrcaSlicer logo" src="resources/images/OrcaSlicer.png" width="15%">
 </p>
 
+> [!NOTE]
+> This is a reupload of [jarczakpawel](https://github.com/jarczakpawel)'s
+> repository with their permission.
+
 # OrcaSlicer — BambuNetwork edition
 
 This version of OrcaSlicer restores full BambuNetwork support for Bambu Lab
@@ -54,6 +58,7 @@ Notes:
 ## BMCU
 
 The BMCU companion firmware is also encouraged. The firmware lives in a
-separate repository in the upstream maintainer's account.
+separate repository in [jarczakpawel](https://github.com/jarczakpawel)'s
+GitHub account.
 </content>
 </invoke>
