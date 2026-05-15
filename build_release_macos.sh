@@ -53,6 +53,33 @@ check_build_tools() {
 }
 check_build_tools
 
+# On Apple Silicon, an x86_64 cmake (e.g. from an Intel Homebrew installed at
+# /usr/local) runs under Rosetta and reports CMAKE_HOST_SYSTEM_PROCESSOR=x86_64
+# to every sub-project it configures. The slicer compiler is still driven with
+# -arch arm64, so libpng's headers self-enable PNG_ARM_NEON_OPT via __aarch64__
+# while OpenCV's bundled libpng skips its `if(ARM OR AARCH64)` branch and drops
+# the NEON .c files — the slicer link then fails with undefined
+# _png_*_neon symbols. Fail fast with an actionable message.
+check_cmake_arch() {
+    [[ "$(uname -m)" != "arm64" ]] && return
+    [[ "$(file "$(command -v cmake)")" == *"arm64"* ]] && return
+    cat >&2 <<EOF
+error: cmake at $(command -v cmake) is x86_64 on an arm64 host.
+Rosetta makes deps mis-detect the host arch (OpenCV's bundled libpng then
+misses its NEON sources and the slicer link fails with undefined
+_png_*_neon symbols).
+
+Fix one of:
+  - install Apple Silicon Homebrew at /opt/homebrew and \`brew install cmake
+    ninja\` there, then re-run.
+  - reorder PATH so /opt/homebrew/bin precedes /usr/local/bin.
+  - run \`arch -arm64 ./build_release_macos.sh\` to force the whole build to
+    execute as native arm64.
+EOF
+    exit 1
+}
+check_cmake_arch
+
 while getopts ":dpa:snt:xbc:i:1Tuh" opt; do
     case "${opt}" in
         d)
